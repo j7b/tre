@@ -14,7 +14,7 @@ import (
 func (c *Compiler) compileConstantNode(v *parser.ConstantNode) value.Value {
 	switch v.Type {
 	case parser.NUMBER:
-		var intType *types.Int = i64
+		var intType = i64
 
 		// Use context to detect which type that should be returned
 		// Is used to detect if a number should be i32 or i64 etc...

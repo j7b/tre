@@ -207,7 +207,10 @@ type AllocNode struct {
 
 	Name       string
 	MultiNames *MultiNameNode
-	Escapes    bool
+
+	// Is set to true if we're sure that its safe to allocate on the stack
+	// instead of on the heap
+	StackAlloc bool
 
 	Val Node
 }
@@ -217,7 +220,7 @@ func (an AllocNode) String() string {
 		return fmt.Sprintf("allocMulti(%+v) = %v", an.MultiNames, an.Val)
 	}
 
-	return fmt.Sprintf("alloc(%s) = %v (escapes: %v)", an.Name, an.Val, an.Escapes)
+	return fmt.Sprintf("alloc(%s) = %v (stack: %v)", an.Name, an.Val, an.StackAlloc)
 }
 
 // AssignNode assign Val to Target (or Name)

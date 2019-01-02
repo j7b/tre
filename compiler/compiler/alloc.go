@@ -2,6 +2,9 @@ package compiler
 
 import (
 	"github.com/llir/llvm/ir"
+	"github.com/llir/llvm/ir/constant"
+	llvmTypes "github.com/llir/llvm/ir/types"
+	llvmValue "github.com/llir/llvm/ir/value"
 	"github.com/zegl/tre/compiler/compiler/types"
 	"github.com/zegl/tre/compiler/compiler/value"
 	"github.com/zegl/tre/compiler/parser"
@@ -82,13 +85,26 @@ func (c *Compiler) compileAllocNode(v *parser.AllocNode) {
 		llvmVal = c.contextBlock.NewLoad(llvmVal)
 	}
 
-	alloc := c.contextBlock.NewAlloca(llvmVal.Type())
-	alloc.SetName(getVarName(v.Name))
-	c.contextBlock.NewStore(llvmVal, alloc)
+	// var alloc *ir.InstAlloca
+
+	var allocVal llvmValue.Value
+
+	if v.StackAlloc {
+		alloc := c.contextBlock.NewAlloca(llvmVal.Type())
+		alloc.SetName(getVarName(v.Name) + "heeere")
+		allocVal = alloc
+
+	} else {
+		mallocatedSpaceRaw := c.contextBlock.NewCall(c.externalFuncs.Malloc.LlvmFunction, constant.NewInt(llvmTypes.I64, val.Type.Size()))
+		allocVal = c.contextBlock.NewBitCast(mallocatedSpaceRaw, llvmTypes.NewPointer(val.Type.LLVM()))
+		// structType.IsHeapAllocated = true
+	}
+
+	c.contextBlock.NewStore(llvmVal, allocVal)
 
 	c.setVar(v.Name, value.Value{
 		Type:       val.Type,
-		Value:      alloc,
+		Value:      allocVal,
 		IsVariable: true,
 	})
 

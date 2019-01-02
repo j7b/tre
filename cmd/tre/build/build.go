@@ -28,8 +28,8 @@ func Build(path, goroot, outputBinaryPath string, setDebug bool) error {
 
 	compiled := c.GetIR()
 
-	if debug {
-		log.Println(compiled)
+	if debug || true {
+		fmt.Println(compiled)
 	}
 
 	// Get dir to save temporary dirs in

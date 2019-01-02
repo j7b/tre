@@ -6,7 +6,7 @@ import (
 
 // Escape performs variable escape analysis on variables allocated in functions
 func Escape(input parser.FileNode) parser.FileNode {
-	for _, ins := range input.Instructions {
+	/*for _, ins := range input.Instructions {
 		if defFunc, ok := ins.(*parser.DefineFuncNode); ok {
 
 			// Name of the var mapped to their allocNode instruction index
@@ -43,7 +43,7 @@ func Escape(input parser.FileNode) parser.FileNode {
 				}
 			}
 		}
-	}
+	}*/
 
 	return input
 }

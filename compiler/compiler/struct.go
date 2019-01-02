@@ -117,12 +117,12 @@ func (c *Compiler) compileInitStructWithValues(v *parser.InitializeStructNode) v
 	var alloc llvmValue.Value
 
 	// Allocate on the heap or on the stack
-	if len(c.contextAlloc) > 0 && c.contextAlloc[len(c.contextAlloc)-1].Escapes {
+	if len(c.contextAlloc) > 0 && c.contextAlloc[len(c.contextAlloc)-1].StackAlloc {
+		alloc = c.contextBlock.NewAlloca(structType.LLVM())
+	} else {
 		mallocatedSpaceRaw := c.contextBlock.NewCall(c.externalFuncs.Malloc.LlvmFunction, constant.NewInt(llvmTypes.I64, structType.Size()))
 		alloc = c.contextBlock.NewBitCast(mallocatedSpaceRaw, llvmTypes.NewPointer(structType.LLVM()))
 		structType.IsHeapAllocated = true
-	} else {
-		alloc = c.contextBlock.NewAlloca(structType.LLVM())
 	}
 
 	treType.Zero(c.contextBlock, alloc)
